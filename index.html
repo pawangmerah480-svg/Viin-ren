@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Institutional Trading Terminal</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts untuk tampilan profesional -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Desktop Container -->
+    <div class="desktop">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="logo">TRADE<span>PRO</span></div>
+            <div class="account-info">
+                <span>Account: 12345678</span>
+                <span>Balance: $100,000.00</span>
+                <span>Equity: $100,234.50</span>
+                <span>Margin: 0.23%</span>
+            </div>
+            <div class="profile-actions">
+                <button id="saveLayout">💾 Save Layout</button>
+                <button id="resetLayout">⟲ Reset</button>
+            </div>
+        </div>
+
+        <!-- Main Workspace (grid dengan panel yang bisa diresize) -->
+        <div class="workspace">
+            <!-- Left Panel: Market Watch -->
+            <div class="panel left-panel" id="marketWatch">
+                <div class="panel-header">Market Watch <span class="panel-controls">🔍 ➕</span></div>
+                <div class="panel-content">
+                    <table class="market-table">
+                        <thead>
+                            <tr><th>Symbol</th><th>Bid</th><th>Ask</th><th>Spread</th><th>%</th></tr>
+                        </thead>
+                        <tbody id="marketData">
+                            <!-- diisi oleh JS -->
+                        </tbody>
+                    </table>
+                    <div class="market-filter">
+                        <input type="text" placeholder="Filter symbol..." id="marketFilter">
+                    </div>
+                </div>
+                <div class="resize-handle resize-left"></div>
+            </div>
+
+            <!-- Center Panel: Chart Area (dengan tab) -->
+            <div class="panel center-panel" id="chartPanel">
+                <div class="panel-header">
+                    <div class="chart-tabs">
+                        <span class="tab active">EURUSD</span>
+                        <span class="tab">BTCUSD</span>
+                        <span class="tab">AAPL</span>
+                        <span class="tab">+</span>
+                    </div>
+                    <div class="chart-tools">
+                        <span>📊</span><span>🔍</span><span>⚙️</span>
+                    </div>
+                </div>
+                <div class="panel-content chart-container">
+                    <canvas id="mainChart" width="800" height="400"></canvas>
+                    <!-- Overlay untuk crosshair dan info -->
+                    <div class="chart-overlay" id="chartOverlay"></div>
+                </div>
+                <div class="timeframe-bar">
+                    <span class="tf active">M1</span><span class="tf">M5</span><span class="tf">M15</span>
+                    <span class="tf">M30</span><span class="tf">H1</span><span class="tf">H4</span>
+                    <span class="tf">D1</span><span class="tf">W1</span><span class="tf">MN</span>
+                </div>
+                <div class="resize-handle resize-center"></div>
+            </div>
+
+            <!-- Right Panel: Order & Risk -->
+            <div class="panel right-panel" id="orderPanel">
+                <div class="panel-header">Order Entry <span class="panel-controls">⚡</span></div>
+                <div class="panel-content">
+                    <div class="order-type">
+                        <select id="orderType">
+                            <option>Market</option>
+                            <option>Limit</option>
+                            <option>Stop</option>
+                            <option>Stop Limit</option>
+                            <option>OCO</option>
+                        </select>
+                    </div>
+                    <div class="order-detail">
+                        <label>Symbol</label><input type="text" id="symbol" value="EURUSD">
+                        <label>Volume (lots)</label><input type="number" id="volume" value="0.1" step="0.01">
+                        <label>Stop Loss</label><input type="text" id="sl" placeholder="0.0">
+                        <label>Take Profit</label><input type="text" id="tp" placeholder="0.0">
+                        <label>Comment</label><input type="text" id="comment" placeholder="optional">
+                    </div>
+                    <div class="order-buttons">
+                        <button class="buy" id="btnBuy">Buy</button>
+                        <button class="sell" id="btnSell">Sell</button>
+                    </div>
+                    <div class="risk-summary">
+                        <div>Margin: <span id="marginReq">$0.00</span></div>
+                        <div>Risk: <span id="riskPercent">0.00%</span></div>
+                    </div>
+                </div>
+                <div class="resize-handle resize-right"></div>
+            </div>
+
+            <!-- Bottom Panel: Terminal (Trade/History/Journal) -->
+            <div class="panel bottom-panel" id="terminal">
+                <div class="panel-header">
+                    <div class="terminal-tabs">
+                        <span class="tab active">Trade</span>
+                        <span class="tab">History</span>
+                        <span class="tab">Journal</span>
+                        <span class="tab">Alerts</span>
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <div id="tradeTab" class="tab-content active">
+                        <table class="trade-table">
+                            <thead><tr><th>Symbol</th><th>Type</th><th>Volume</th><th>Open</th><th>SL</th><th>TP</th><th>Price</th><th>P/L</th></tr></thead>
+                            <tbody id="openPositions">
+                                <!-- dummy positions -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="historyTab" class="tab-content">
+                        <table class="history-table"><thead><tr><th>Closed</th><th>Profit</th></tr></thead><tbody></tbody></table>
+                    </div>
+                    <div id="journalTab" class="tab-content">System log: Margin call at 10:32...</div>
+                </div>
+                <div class="resize-handle resize-bottom"></div>
+            </div>
+        </div>
+
+        <!-- Economic Calendar & Analytics (popup / panel tambahan) -->
+        <div class="floating-panels">
+            <div class="float-panel" id="calendarPanel">
+                <div class="float-header">Economic Calendar 📅 <span class="close">✖</span></div>
+                <div class="float-content">15:30 USD Nonfarm Payrolls (High)</div>
+            </div>
+            <div class="float-panel" id="analyticsPanel">
+                <div class="float-header">Analytics Dashboard 📊</div>
+                <div class="float-content">
+                    Win Rate: 68%<br>
+                    Profit Factor: 1.45<br>
+                    Max DD: 12%
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
