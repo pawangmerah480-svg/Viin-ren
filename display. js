@@ -1,0 +1,49 @@
+cd /home/claude/fish-it-gileg && python3 - <<'EOF'
+with open('index.html','r') as f:
+    html = f.read()
+
+# Add combo display after info-strip
+old = '        <!-- STATE: IDLE -->'
+new = '''        <!-- COMBO DISPLAY -->
+        <div id="combo-disp" class="combo-badge" style="display:none"></div>
+
+        <!-- STATE: IDLE -->'''
+html = html.replace(old, new, 1)
+
+# Add achievements tab to nav
+old = '    <button class="nb" data-tab="settings">⚙️<span>Setting</span></button>'
+new = '''    <button class="nb" data-tab="achievements">🏅<span>Prestasi</span></button>
+    <button class="nb" data-tab="settings">⚙️<span>Setting</span></button>'''
+html = html.replace(old, new, 1)
+
+# Add achievements tab content before settings tab
+old = '    <!-- ══ TAB: SETTINGS ══ -->'
+new = '''    <!-- ══ TAB: ACHIEVEMENTS ══ -->
+    <div id="tab-achievements" class="tab hidden">
+      <div class="sh"><h2>🏅 Prestasi</h2><span class="badge" id="ach-badge">0 selesai</span></div>
+      <div class="ach-grid" id="ach-grid"></div>
+    </div>
+
+    <!-- ══ TAB: SETTINGS ══ -->'''
+html = html.replace(old, new, 1)
+
+# Add daily login popup placeholder
+old = '<!-- TOAST -->'
+new = '''<!-- DAILY LOGIN POPUP -->
+<div id="modal-daily" class="mover" style="display:none">
+  <div class="mbox mgold">
+    <div class="mstar">📅</div><h2>Daily Login!</h2>
+    <p id="daily-streak-txt">Hari ke-1</p>
+    <p id="daily-bonus-txt" class="mlvl-b">+100 💰</p>
+    <div class="login-streak-dots" id="login-dots"></div>
+    <button class="btn-retry" id="btn-daily-ok">🎉 Ambil!</button>
+  </div>
+</div>
+
+<!-- TOAST -->'''
+html = html.replace(old, new, 1)
+
+with open('index.html','w') as f:
+    f.write(html)
+print("✅ HTML updated with achievements + combo + daily modal")
+EOF
