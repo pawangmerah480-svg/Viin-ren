@@ -1,0 +1,29 @@
+cd /home/claude/fish-it-gileg && python3 - <<'EOF'
+with open('script.js','r') as f:
+    code = f.read()
+
+# Add doFishJump before onMiss
+old = 'function onMiss(){'
+new = '''function doFishJump(icon, rarity){
+  // Animate fish flying out of water on the canvas
+  if(!scene) return;
+  const x=scene.bobber.x, wy=scene.waterY;
+  const glowCol={Common:'#aaddff',Uncommon:'#4499ff',Rare:'#aa55ff',Epic:'#ffaa00',Legendary:'#ff3344',Mythic:'#ff44ff'}[rarity]||'#fff';
+  let progress=0;
+  const jumpFish={x,y:wy,vx:(Math.random()-.5)*3,vys:-8,vy:-8,emoji:icon,sz:28,glow:true,glowCol,rarity,canBite:false,dead:false,fr:0,ph:0,amp:0};
+  scene.fishes.push(jumpFish);
+  const jumpInt=setInterval(()=>{
+    progress++;
+    jumpFish.vy+=0.6; jumpFish.y+=jumpFish.vy; jumpFish.x+=jumpFish.vx;
+    scene._spawnSplash(x,wy,3);
+    if(jumpFish.y>scene.H+30||progress>40){jumpFish.dead=true;clearInterval(jumpInt);}
+  },25);
+}
+
+function onMiss(){'''
+
+code = code.replace('function onMiss(){', new, 1)
+with open('script.js','w') as f:
+    f.write(code)
+print("✅ Added doFishJump")
+EOF
