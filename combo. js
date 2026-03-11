@@ -1,0 +1,23 @@
+cd /home/claude/fish-it-gileg && python3 - <<'EOF'
+with open('script.js','r') as f:
+    code = f.read()
+
+# Reset combo on miss
+old = "  pendingCatch=null; setPhase('miss'); playSFX('miss');\n}"
+new = "  G.combo=0;\n  pendingCatch=null; setPhase('miss'); playSFX('miss');\n}"
+code = code.replace(old, new, 1)
+
+# Add checkDailyLogin call to init
+old = "  // Starter\n  if(!G.totalCaught&&!G.coins){"
+new = "  // Daily login check\n  checkDailyLogin();\n\n  // Starter\n  if(!G.totalCaught&&!G.coins){"
+code = code.replace(old, new, 1)
+
+# Add combo display to updateHUD
+old = "  setText('sq-c',G.totalCaught);setText('sq-x',fmt(G.xp));setText('sq-l',G.legendaryCount);setText('sq-m',G.mythicCount);"
+new = "  setText('sq-c',G.totalCaught);setText('sq-x',fmt(G.xp));setText('sq-l',G.legendaryCount);setText('sq-m',G.mythicCount);\n  const cb=document.getElementById('combo-disp');if(cb){cb.textContent=G.combo>1?'🔥 Combo x'+G.combo:'';cb.style.display=G.combo>1?'block':'none';}"
+code = code.replace(old, new, 1)
+
+with open('script.js','w') as f:
+    f.write(code)
+print("✅ Added combo reset + daily login + combo display")
+EOF
